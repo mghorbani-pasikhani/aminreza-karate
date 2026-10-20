@@ -1,228 +1,193 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="صفحه شخصی امین‌رضا قربانی پسیخانی، ورزشکار رشته کاراته">
+  <title>امین‌رضا قربانی پسیخانی | کاراته</title>
 
-<title>امین‌رضا قربانی پسیخانی | کاراته</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<meta name="description" content="وب‌سایت ورزشی امین‌رضا قربانی پسیخانی؛ تصاویر کاراته، مدال‌ها، گواهی‌ها و افتخارات ورزشی.">
+    html {
+      scroll-behavior: smooth;
+    }
 
-<style>
-* {
-  box-sizing: border-box;
-}
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f3f7f5;
+      color: #263832;
+      line-height: 2;
+    }
 
-body {
-  margin: 0;
-  font-family: Tahoma, Arial, sans-serif;
-  background: #f3f6f5;
-  color: #24332f;
-  line-height: 2;
-}
+    header {
+      text-align: center;
+      padding: 35px 16px 30px;
+      color: white;
+      background: linear-gradient(135deg, #075e50, #159477);
+    }
 
-header {
-  background: linear-gradient(135deg, #123c35, #16745d);
-  color: white;
-  text-align: center;
-  padding: 30px 15px;
-}
+    .profile {
+      display: block;
+      width: 190px;
+      height: auto;
+      max-width: 90%;
+      margin: 0 auto 18px;
+      border-radius: 12px;
+      border: 4px solid white;
+      object-fit: contain;
+      box-shadow: 0 5px 18px #003d3340;
+    }
 
-header h1 {
-  margin: 15px 0 8px;
-  font-size: 27px;
-}
+    header h1 {
+      margin: 10px 0 4px;
+      font-size: 27px;
+    }
 
-header p {
-  margin: 5px;
-}
+    header p {
+      margin: 4px 0;
+    }
 
-/* عکس پروفایل مستطیلی */
-.profile {
-  display: block;
-  width: 240px;
-  max-width: 95%;
-  height: auto;
-  margin: 0 auto 12px;
-  object-fit: contain;
-  border-radius: 0;
-  border: 4px solid white;
-  background: #ddd;
-}
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 10px;
+      background: #064d42;
+    }
 
-nav {
-  background: white;
-  text-align: center;
-  padding: 12px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 8px #0001;
-}
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
 
-nav a {
-  display: inline-block;
-  margin: 4px 8px;
-  color: #17634f;
-  text-decoration: none;
-  font-weight: bold;
-}
+    nav a:hover {
+      background: #168b72;
+    }
 
-main {
-  max-width: 1000px;
-  margin: auto;
-  padding: 18px;
-}
+    main {
+      width: 92%;
+      max-width: 900px;
+      margin: 25px auto;
+    }
 
-section {
-  background: white;
-  margin: 18px 0;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 3px 12px #00008;
-}
+    section {
+      background: white;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #173b2a0d;
+      scroll-margin-top: 75px;
+    }
 
-h2 {
-  color: #17634f;
-  border-bottom: 2px solid #d9e9e2;
-  padding-bottom: 8px;
-}
+    section h2 {
+      color: #08745c;
+      border-bottom: 2px solid #d9eee6;
+      padding-bottom: 8px;
+      margin-top: 0;
+    }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-}
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
 
-figure {
-  margin: 0;
-  background: #f5f8f6;
-  border-radius: 10px;
-  overflow: hidden;
-}
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: contain;
+      background: #f1f5f3;
+    }
 
-figure img {
-  width: 100%;
-  height: 220px;
-  object-fit: contain;
-  display: block;
-  background: #e8f1ed;
-}
+    footer {
+      text-align: center;
+      padding: 22px 12px;
+      color: white;
+      background: #064d42;
+      font-size: 14px;
+    }
 
-figcaption {
-  text-align: center;
-  padding: 8px;
-}
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 22px;
+      }
 
-footer {
-  text-align: center;
-  padding: 22px;
-  background: #123c35;
-  color: white;
-}
-</style>
+      .profile {
+        width: 170px;
+      }
+
+      nav a {
+        padding: 4px 8px;
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <img
-    class="profile"
-    src="file_00000000e4e081f4ad3803987f8af1d3.jpg"
-    alt="تصویر امین‌رضا"
-  >
+  <header>
+    <img
+      class="profile"
+      src="https://mdfvczwflgdcyboxylqk.supabase.co/storage/v1/object/public/aminreza-photos/Untitled%20folder/1000043567.jpg"
+      alt="عکس امین‌رضا قربانی پسیخانی"
+    >
 
-  <h1>امین‌رضا قربانی پسیخانی</h1>
-  <p>ورزشکار رشته کاراته 🥋</p>
-  <p>گالری تصاویر، مدال‌ها و افتخارات ورزشی</p>
-</header>
+    <h1>امین‌رضا قربانی پسیخانی</h1>
+    <p>ورزشکار رشته کاراته 🥋</p>
+    <p>به صفحه شخصی من خوش آمدید 🌹</p>
+  </header>
 
-<nav>
-  <a href="#about">درباره من</a>
-  <a href="#medals">مدال‌ها</a>
-  <a href="#certificates">گواهی‌ها</a>
-  <a href="#gallery">گالری تصاویر</a>
-</nav>
+  <nav>
+    <a href="#about">درباره من</a>
+    <a href="#medals">مدال‌ها</a>
+    <a href="#certificates">گواهی‌ها</a>
+    <a href="#gallery">گالری تصاویر</a>
+  </nav>
 
-<main>
+  <main>
+    <section id="about">
+      <h2>درباره من</h2>
+      <p>
+        من امین‌رضا قربانی پسیخانی هستم و به ورزش کاراته علاقه دارم.
+        این صفحه برای معرفی من و نمایش تصاویر و افتخارات ورزشی‌ام ساخته شده است.
+      </p>
+    </section>
 
-<section id="about">
-  <h2>درباره من</h2>
-  <p>
-    به وب‌سایت ورزشی من خوش آمدید.
-    در این صفحه می‌توانید تصاویر ورزشی، مدال‌ها،
-    گواهی‌ها و خاطرات من از دنیای کاراته را ببینید.
-  </p>
-</section>
+    <section id="medals">
+      <h2>مدال‌ها و افتخارات 🏅</h2>
+      <p>تصاویر مدال‌ها و افتخارات ورزشی من در این بخش قرار می‌گیرند.</p>
+    </section>
 
-<section id="medals">
-  <h2>🏅 مدال‌ها و افتخارات</h2>
-  <div class="gallery">
+    <section id="certificates">
+      <h2>گواهی‌ها و تقدیرنامه‌ها 📜</h2>
+      <p>تصاویر گواهی‌ها و تقدیرنامه‌های من در این بخش قرار می‌گیرند.</p>
+    </section>
 
-    <figure>
-      <img src="medal-1.jpg" alt="مدال اول"
-           onerror="this.style.display='none'">
-      <figcaption>مدال و افتخار ورزشی</figcaption>
-    </figure>
+    <section id="gallery">
+      <h2>گالری تصاویر 📸</h2>
+      <p>تصاویر تمرین‌ها، مسابقات و فعالیت‌های ورزشی من.</p>
+      <div class="gallery">
+        <!-- آدرس عکس‌های دیگر را بعداً در این قسمت اضافه می‌کنیم. -->
+      </div>
+    </section>
+  </main>
 
-    <figure>
-      <img src="medal-2.jpg" alt="مدال دوم"
-           onerror="this.style.display='none'">
-      <figcaption>یادگاری مسابقات</figcaption>
-    </figure>
-
-    <figure>
-      <img src="medal-3.jpg" alt="مدال سوم"
-           onerror="this.style.display='none'">
-      <figcaption>افتخار دیگر</figcaption>
-    </figure>
-
-  </div>
-</section>
-
-<section id="certificates">
-  <h2>📜 گواهی‌ها و تقدیرنامه‌ها</h2>
-  <div class="gallery">
-
-    <figure>
-      <img src="certificate-1.jpg" alt="گواهی اول"
-           onerror="this.style.display='none'">
-      <figcaption>گواهی ورزشی</figcaption>
-    </figure>
-
-    <figure>
-      <img src="certificate-2.jpg" alt="گواهی دوم"
-           onerror="this.style.display='none'">
-      <figcaption>تقدیرنامه</figcaption>
-    </figure>
-
-  </div>
-</section>
-
-<section id="gallery">
-  <h2>📸 گالری تصاویر کاراته</h2>
-  <div class="gallery">
-
-    <figure>
-      <img src="karate-1.jpg" alt="تصویر کاراته اول"
-           onerror="this.style.display='none'">
-      <figcaption>خاطرات ورزشی</figcaption>
-    </figure>
-
-    <figure>
-      <img src="karate-2.jpg" alt="تصویر کاراته دوم"
-           onerror="this.style.display='none'">
-      <figcaption>تمرین و مسابقه</figcaption>
-    </figure>
-
-  </div>
-</section>
-
-</main>
-
-<footer>
-  ساخته‌شده با عشق به ورزش 🥋
-</footer>
+  <footer>
+    <p>صفحه شخصی امین‌رضا قربانی پسیخانی 🥋</p>
+  </footer>
 
 </body>
 </html>
