@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -144,8 +143,9 @@
 
 <body>
 <header>
-  <img class="profile"
-    src="https://mdfvczwflgdcyboxylqk.supabase.co/storage/v1/object/public/aminreza-photos/Untitled%20folder/1000043567.jpg"
+  <img
+    class="profile"
+    src="https://mdfvczwflgdcyboxylqk.supabase.co/storage/v1/object/public/aminreza-photos/1000043567.jpg"
     alt="عکس امین‌رضا قربانی پسیخانی"
     onerror="this.alt='عکس پروفایل بارگذاری نشد'">
 
@@ -199,16 +199,11 @@
 
       <div id="login-area" class="admin-form">
         <p>برای افزودن یا حذف عکس، با حساب مدیر وارد شوید.</p>
-
         <form id="login-form" class="admin-form">
           <input id="email" type="email"
-            placeholder="ایمیل مدیر"
-            autocomplete="username" required>
-
+            placeholder="ایمیل مدیر" autocomplete="username" required>
           <input id="password" type="password"
-            placeholder="رمز عبور"
-            autocomplete="current-password" required>
-
+            placeholder="رمز عبور" autocomplete="current-password" required>
           <button id="login-btn" type="submit">ورود مدیر</button>
         </form>
       </div>
@@ -225,9 +220,7 @@
           </select>
 
           <label for="photo">انتخاب عکس از گوشی:</label>
-          <input id="photo" type="file"
-            accept="image/*" required>
-
+          <input id="photo" type="file" accept="image/*" required>
           <button id="upload-btn" type="submit">آپلود عکس</button>
         </form>
 
@@ -247,7 +240,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 (() => {
   'use strict';
@@ -255,10 +247,9 @@
   const PROJECT_URL =
     'https://mdfvczwflgdcyboxylqk.supabase.co';
 
-  // کلید عمومی واقعی پروژه را بین کوتیشن‌ها قرار بده.
-  
-const SUPABASE_PUBLISHABLE_KEY =
-  'sb_publishable_N2k7-2ni7AX1dxSD2GVaMA_gyZj2DDL';
+  const SUPABASE_PUBLISHABLE_KEY =
+    'sb_publishable_N2k7-2ni7AX1dxSD2GVaMA_gyZj2DDL';
+
   const ADMIN_EMAIL = 'm.ghorbani.pasikhani@gmail.com';
   const BUCKET = 'aminreza-photos';
 
@@ -291,9 +282,11 @@ const SUPABASE_PUBLISHABLE_KEY =
     }
   }
 
-  function safeError(error) {
-    console.error('Supabase error:', error);
-    message('عملیات انجام نشد. اتصال اینترنت و مجوزهای Supabase را بررسی کن.');
+  function safeError(error, action) {
+    console.error(action, error);
+    const detail = error?.message || error?.error_description || '';
+    message(action + ' انجام نشد.' +
+      (detail ? ' خطا: ' + detail : ' اینترنت و مجوزهای Storage را بررسی کن.'));
   }
 
   function setupClient() {
@@ -302,39 +295,26 @@ const SUPABASE_PUBLISHABLE_KEY =
       return false;
     }
 
-    if (
-      !SUPABASE_PUBLISHABLE_KEY ||
-      SUPABASE_PUBLISHABLE_KEY.startsWith('کلید_عمومی_') ||
-      SUPABASE_PUBLISHABLE_KEY.startsWith('sb_secret_')
-    ) {
-      message('کلید عمومی Publishable را در کد قرار بده.');
-      return false;
-    }
-
     client = window.supabase.createClient(
       PROJECT_URL,
       SUPABASE_PUBLISHABLE_KEY
     );
-
     return true;
   }
 
   function makePhotoCard(path, isAdmin) {
-    const result = client.storage.from(BUCKET).getPublicUrl(path);
-    const url = result.data.publicUrl;
+    const { data } = client.storage.from(BUCKET).getPublicUrl(path);
 
     const card = document.createElement('article');
     card.className = 'photo-card';
 
     const img = document.createElement('img');
     img.loading = 'lazy';
-    img.src = url;
+    img.src = data.publicUrl;
     img.alt = 'تصویر ورزشی امین‌رضا';
-
     img.onerror = () => {
-      img.alt = 'تصویر بارگذاری نشد؛ مجوز و مسیر عکس را بررسی کن.';
+      img.alt = 'تصویر باز نشد؛ آدرس یا دسترسی عکس را بررسی کن.';
     };
-
     card.appendChild(img);
 
     const name = document.createElement('p');
@@ -350,25 +330,19 @@ const SUPABASE_PUBLISHABLE_KEY =
 
       del.addEventListener('click', async () => {
         if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
-          message('برای حذف عکس باید مدیر مجاز وارد شده باشد.');
+          message('برای حذف عکس باید مدیر وارد شده باشد.');
           return;
         }
-
         if (!confirm('از حذف این عکس مطمئنی؟')) return;
 
         del.disabled = true;
-
         try {
-          const { error } = await client.storage
-            .from(BUCKET)
-            .remove([path]);
-
+          const { error } = await client.storage.from(BUCKET).remove([path]);
           if (error) throw error;
-
           message('عکس حذف شد.');
           await loadPhotos();
         } catch (error) {
-          safeError(error);
+          safeError(error, 'حذف عکس');
           del.disabled = false;
         }
       });
@@ -384,12 +358,10 @@ const SUPABASE_PUBLISHABLE_KEY =
     target.replaceChildren();
 
     try {
-      const { data, error } = await client.storage
-        .from(BUCKET)
-        .list(folder, {
-          limit: 100,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
+      const { data, error } = await client.storage.from(BUCKET).list(folder, {
+        limit: 100,
+        sortBy: { column: 'created_at', order: 'desc' }
+      });
 
       if (error) throw error;
 
@@ -406,26 +378,20 @@ const SUPABASE_PUBLISHABLE_KEY =
       }
 
       for (const file of files) {
-        const path = folder + '/' + file.name;
-        target.appendChild(
-          makePhotoCard(path, Boolean(currentUser))
-        );
+        target.appendChild(makePhotoCard(folder + '/' + file.name, Boolean(currentUser)));
       }
     } catch (error) {
       console.error('Photo listing error:', folder, error);
-
       const p = document.createElement('p');
       p.className = 'empty';
-      p.textContent =
-        'دریافت عکس‌ها ممکن نشد؛ سیاست دسترسی و نام پوشه را بررسی کن.';
-
+      p.textContent = 'دریافت عکس‌ها ناموفق بود: ' +
+        (error?.message || 'مجوز فهرست‌کردن فایل‌ها را بررسی کن.');
       target.appendChild(p);
     }
   }
 
   async function loadPhotos() {
     if (!client) return;
-
     await Promise.all([
       loadFolder('gallery', 'gallery-list'),
       loadFolder('medals', 'medals-list'),
@@ -442,10 +408,7 @@ const SUPABASE_PUBLISHABLE_KEY =
 
   async function showLoggedIn(user) {
     if (!user || user.email !== ADMIN_EMAIL) {
-      if (user) {
-        await client.auth.signOut();
-      }
-
+      if (user) await client.auth.signOut();
       showLoggedOut();
       message('این حساب اجازه مدیریت عکس‌ها را ندارد.');
       return;
@@ -454,42 +417,29 @@ const SUPABASE_PUBLISHABLE_KEY =
     currentUser = user;
     loginArea.hidden = true;
     managerArea.hidden = false;
-
     document.getElementById('manager-email').textContent =
       'وارد شده‌اید: ' + user.email;
-
     await loadPhotos();
   }
 
   loginForm.addEventListener('submit', async event => {
     event.preventDefault();
-
     if (!client) {
-      message('کلید عمومی Supabase تنظیم نشده است.');
+      message('اتصال Supabase برقرار نشده است.');
       return;
     }
 
     setBusy(loginBtn, true, 'در حال ورود...');
-
     try {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-
-      const { data, error } = await client.auth.signInWithPassword({
-        email,
-        password
-      });
-
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       await showLoggedIn(data.user);
-
-      if (currentUser) {
-        message('ورود موفق بود.');
-      }
+      if (currentUser) message('ورود موفق بود.');
     } catch (error) {
-      console.error('Login error:', error);
-      message('ورود ناموفق بود؛ ایمیل، رمز عبور و تنظیمات حساب را بررسی کن.');
+      safeError(error, 'ورود');
     } finally {
       setBusy(loginBtn, false);
     }
@@ -510,68 +460,58 @@ const SUPABASE_PUBLISHABLE_KEY =
       message('ابتدا یک عکس انتخاب کن.');
       return;
     }
-
     if (!file.type.startsWith('image/')) {
       message('فقط فایل تصویری انتخاب کن.');
       return;
     }
-
     if (file.size > 10 * 1024 * 1024) {
       message('حجم عکس باید کمتر از ۱۰ مگابایت باشد.');
       return;
     }
 
-    const extension = (
-      file.name.split('.').pop() || 'jpg'
-    ).toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const extension =
+      (file.name.split('.').pop() || 'jpg')
+        .toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
 
     const filename = Date.now() + '-' +
       Math.random().toString(36).slice(2, 8) + '.' + extension;
-
     const path = category + '/' + filename;
 
     setBusy(uploadBtn, true, 'در حال آپلود...');
-
     try {
-      const { error } = await client.storage
-        .from(BUCKET)
-        .upload(path, file, {
-          contentType: file.type,
-          upsert: false
-        });
-
+      const { error } = await client.storage.from(BUCKET).upload(path, file, {
+        contentType: file.type,
+        upsert: false
+      });
       if (error) throw error;
 
       document.getElementById('photo').value = '';
       message('عکس با موفقیت آپلود شد.');
       await loadPhotos();
     } catch (error) {
-      safeError(error);
+      safeError(error, 'آپلود عکس');
     } finally {
       setBusy(uploadBtn, false);
     }
   });
 
-  document.getElementById('logout-btn')
-    .addEventListener('click', async () => {
-      if (!client) return;
-
-      try {
-        const { error } = await client.auth.signOut();
-        if (error) throw error;
-
-        showLoggedOut();
-        await loadPhotos();
-        message('از حساب مدیر خارج شدی.');
-      } catch (error) {
-        safeError(error);
-      }
-    });
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    if (!client) return;
+    try {
+      const { error } = await client.auth.signOut();
+      if (error) throw error;
+      showLoggedOut();
+      await loadPhotos();
+      message('از حساب مدیر خارج شدی.');
+    } catch (error) {
+      safeError(error, 'خروج از حساب');
+    }
+  });
 
   if (setupClient()) {
     client.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
-        if (session && session.user) {
+        if (session?.user) {
           void showLoggedIn(session.user);
         } else {
           showLoggedOut();
