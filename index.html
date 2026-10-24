@@ -4,8 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="صفحه شخصی امین‌رضا قربانی پسیخانی، ورزشکار رشته کاراته">
-  <title>امین‌رضا قربانی پسیخانی | کاراته</title>
+  <meta name="description" content="وب‌سایت شخصی امین‌رضا قربانی پسیخانی، ورزشکار رشته کاراته؛ معرفی ورزشکار، نمایش عکس‌های تمرین و مسابقات، مدال‌ها، افتخارات، گواهی‌ها و تقدیرنامه‌ها.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="امین‌رضا قربانی پسیخانی">
+  <link rel="canonical" href="https://mghorbani-pasikhani.github.io/aminreza-karate/">
+  <title>امین‌رضا قربانی پسیخانی | ورزشکار کاراته</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -182,15 +185,16 @@
 
 <main>
   <section id="about">
-    <h2>درباره من</h2>
+    <h2>درباره امین‌رضا قربانی پسیخانی</h2>
     <p>
       من امین‌رضا قربانی پسیخانی هستم و به ورزش کاراته علاقه دارم.
-      این صفحه برای معرفی من و نمایش تصاویر و افتخارات ورزشی‌ام ساخته شده است.
+      این صفحه شخصی برای معرفی من و نمایش تصاویر تمرین‌ها، مسابقات،
+      مدال‌ها، افتخارات ورزشی، گواهی‌ها و تقدیرنامه‌هایم ساخته شده است.
     </p>
   </section>
 
   <section id="medals">
-    <h2>مدال‌ها و افتخارات 🏅</h2>
+    <h2>مدال‌ها و افتخارات کاراته 🏅</h2>
     <div id="medalsGrid" class="photo-grid">
       <p class="empty">در حال دریافت تصاویر...</p>
     </div>
@@ -204,8 +208,8 @@
   </section>
 
   <section id="gallery">
-    <h2>گالری تصاویر 📸</h2>
-    <p>تصاویر تمرین‌ها، مسابقات و فعالیت‌های ورزشی من.</p>
+    <h2>گالری تصاویر امین‌رضا 📸</h2>
+    <p>تصاویر تمرین‌ها، مسابقات و فعالیت‌های ورزشی امین‌رضا قربانی پسیخانی.</p>
     <div id="galleryGrid" class="photo-grid">
       <p class="empty">در حال دریافت تصاویر...</p>
     </div>
@@ -260,12 +264,8 @@
 (() => {
   "use strict";
 
-  const SUPABASE_URL =
-    "https://mdfvczwflgdcyboxylqk.supabase.co";
-
-  const SUPABASE_KEY =
-    "sb_publishable_N2k7-2ni7AX1dxSD2GVaMA_gyZj2DDL";
-
+  const SUPABASE_URL = "https://mdfvczwflgdcyboxylqk.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_N2k7-2ni7AX1dxSD2GVaMA_gyZj2DDL";
   const BUCKET = "aminreza-photos";
   const ADMIN_EMAIL = "m.ghorbani.pasikhani@gmail.com";
 
@@ -284,6 +284,7 @@
 
   let currentAdminEmail = "";
   let loadingPhotos = false;
+  let refreshQueued = false;
 
   const showMessage = message => {
     statusMessage.textContent = message;
@@ -295,16 +296,16 @@
   const isImageFile = file =>
     /\.(jpe?g|png|gif|webp|bmp|avif)$/i.test(file.name || "");
 
-  function publicImageUrl(path) {
-    return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-  }
-
   if (!window.supabase) {
     showMessage("کتابخانه Supabase بارگذاری نشد. اتصال اینترنت را بررسی کنید.");
     return;
   }
 
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function publicImageUrl(path) {
+    return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+  }
 
   async function loadFolder(folder) {
     const target = document.getElementById(sections[folder]);
@@ -318,11 +319,8 @@
 
       if (error) throw error;
 
-      // فقط نام فایل و پسوند عکس بررسی می‌شود؛ item.id الزامی نیست.
       const files = (data || []).filter(item =>
-        item.name &&
-        !item.name.startsWith(".") &&
-        isImageFile(item)
+        item.name && !item.name.startsWith(".") && isImageFile(item)
       );
 
       if (files.length === 0) {
@@ -342,11 +340,9 @@
         img.src = publicImageUrl(path);
         img.alt = "تصویر " + folder;
         img.loading = "lazy";
-
         img.onerror = () => {
           img.alt = "تصویر بارگذاری نشد";
         };
-
         card.appendChild(img);
 
         if (isAdmin()) {
@@ -393,15 +389,22 @@
   }
 
   async function loadPhotos() {
-    if (loadingPhotos) return;
+    if (loadingPhotos) {
+      refreshQueued = true;
+      return;
+    }
+
     loadingPhotos = true;
 
     try {
-      await Promise.all([
-        loadFolder("medals"),
-        loadFolder("certificates"),
-        loadFolder("gallery")
-      ]);
+      do {
+        refreshQueued = false;
+        await Promise.all([
+          loadFolder("medals"),
+          loadFolder("certificates"),
+          loadFolder("gallery")
+        ]);
+      } while (refreshQueued);
     } finally {
       loadingPhotos = false;
     }
